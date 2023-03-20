@@ -5,8 +5,9 @@ __email__ = 'git@lillecarl.com'
 __version__ = '0.1.0'
 
 from munch import munchify
+from typing import Any
 
-def from_ssv(input: str, **kwargs):
+def from_ssv(input: str, **kwargs) -> list[Any]:
   # Split input lines
   lines = input.splitlines()
   # Create header index
