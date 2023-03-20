@@ -7,37 +7,21 @@ __version__ = '0.1.0'
 from munch import munchify
 
 def from_ssv(input: str, **kwargs):
-  # List we'll return
-  ssvlist: list[any] = list() # type: ignore
-  # All returned lines
+  # Split input lines
   lines = input.splitlines()
-  # Get indexed header identifiers
-  header = { key: value for key, value in enumerate(lines[0].split()) }
+  # Create header index
+  header = { i: name for i, name in enumerate(lines[0].split()) }
 
-  # If stipheaders is true we trim away everything that isn't alphanumeric
-  for k, v in header.items():
-    if kwargs.get('stripheaders'):
-      header[k] = ''.join(v for v in header[k] if v.isalnum())
-    if kwargs.get('tolower'):
-      header[k] = header[k].lower()
+  # Strip headers of whitespace
+  if kwargs.get('stripheaders'):
+    header = { k: v.strip().replace(" ", "") for k, v in header.items() }
+  # turn headers into their lower counterpart
+  if kwargs.get('tolower'):
+    header = { k: v.lower() for k, v in header.items() }
 
-
-  # Remove header from processing
+  # Remove header from lines
   lines.pop(0)
 
-  # Go through all lines
-  for line in lines:
-    # Split line into array
-    linesplit = line.split()
-    # Create dict to stuff data into
-    ssvdict: dict[str, str] = dict()
-
-    # Loop header with index, add to dict with header value as key and line value as value
-    for idx, name in header.items():
-      ssvdict[name] = linesplit[idx]
-
-    # muncify dict (dict with object style access) and add to list
-    ssvlist.append(munchify(ssvdict))
-
-  return ssvlist
+  # Return list of munched dicts with header
+  return [munchify({name: line.split()[idx] for idx, name in header.items()}) for line in lines]
 
