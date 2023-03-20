@@ -10,7 +10,7 @@ def from_ssv(input: str, **kwargs):
   # Split input lines
   lines = input.splitlines()
   # Create header index
-  header = { i: name for i, name in enumerate(lines[0].split()) }
+  header = { idx: name for idx, name in enumerate(lines[0].split()) }
 
   # Strip headers of whitespace
   if kwargs.get('stripheaders'):
