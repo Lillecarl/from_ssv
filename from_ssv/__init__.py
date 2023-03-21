@@ -6,12 +6,18 @@ __author__ = """Carl Hjerpe"""
 __email__ = 'git@lillecarl.com'
 __version__ = '0.1.0'
 
+import os
 from munch import munchify
 from typing import Any
 
 def from_ssv(strin: str, **kwargs) -> list[Any]:
   # Split input lines
   lines = strin.splitlines()
+
+  if os.environ.get('XONSHRC'):
+    if len(lines) == 1:
+      return from_ssv(evalx(f"$({strin})"), kwargs=kwargs) # type: ignore
+
   # We make a simple split for the header, if there are headers with spaces we're doomed either way
   header = { idx: name for idx, name in enumerate(lines[0].split()) }
   
